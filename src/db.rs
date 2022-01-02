@@ -1,4 +1,4 @@
-use crate::data::{Todo, TodoRequest};
+use crate::data::{Todo, TodoRequest, TodoUpdateRequest};
 use crate::error::Error::DBQuery;
 use crate::error::Error::{DBInit, DBPoolConnection};
 use crate::{config, DBCon, DBPool};
@@ -65,4 +65,54 @@ fn row_to_todo(row: &Row) -> Todo {
         created_at,
         checked,
     }
+}
+
+pub async fn fetch_todos(
+    db_pool: &DBPool,
+    search: Option<String>,
+) -> Result<Vec<Todo>, crate::error::Error> {
+    let con = get_db_con(db_pool).await?;
+    let where_clause = match search {
+        Some(_) => "WHERE name like $1",
+        None => "",
+    };
+    let query = format!(
+        "SELECT {} FROM {} {} ORDER BY created_at DESC",
+        config::SELECT_FIELDS(),
+        config::TABLE(),
+        where_clause
+    );
+
+    let q = match search {
+        Some(v) => con.query(query.as_str(), &[&v]).await,
+        None => con.query(query.as_str(), &[]).await,
+    };
+
+    let rows = q.map_err(DBQuery)?;
+
+    Ok(rows.iter().map(row_to_todo).collect())
+}
+
+pub async fn update_todo(
+    db_pool: &DBPool,
+    id: i32,
+    body: TodoUpdateRequest,
+) -> Result<Todo, crate::error::Error> {
+    let con = get_db_con(db_pool).await?;
+    let query = format!(
+        "UPDATE {} SET name = $1, checked = $2 WHERE id = $3 RETURNING *",
+        config::TABLE()
+    );
+    let row = con
+        .query_one(query.as_str(), &[&body.name, &body.checked, &id])
+        .await
+        .map_err(DBQuery)?;
+
+    Ok(row_to_todo(&row))
+}
+
+pub async fn delete_todo(db_pool: &DBPool, id: i32) -> Result<u64, crate::error::Error> {
+    let con = get_db_con(db_pool).await?;
+    let query = format!("DELETE FROM {} WHERE id = $1", config::TABLE());
+    con.execute(query.as_str(), &[&id]).await.map_err(DBQuery)
 }

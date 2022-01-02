@@ -30,7 +30,6 @@ itconfig::config! {
         ),
 
         pool {
-            MAX_SIZE: usize => 15,
             MAX_OPEN: u64 => 32,
             MAX_IDLE: u64 => 8,
             TIMEOUT_SECONDS: u64 => 15,
@@ -39,6 +38,7 @@ itconfig::config! {
 
     init_sql: String => "./db.sql",
     TABLE: String => "todo",
+    SELECT_FIELDS: String => "id, name, created_at, checked"
 }
 
 #[tokio::main]
@@ -67,10 +67,26 @@ async fn main() {
 
     let todo = warp::path("todo");
     let todo_routes = todo
-        .and(warp::post())
-        .and(warp::body::json())
+        .and(warp::get())
+        .and(warp::query())
         .and(with_db(db_pool.clone()))
-        .and_then(handler::create_todo_handler);
+        .and_then(handler::list_todos_handler)
+        .or(todo
+            .and(warp::post())
+            .and(warp::body::json())
+            .and(with_db(db_pool.clone()))
+            .and_then(handler::create_todo_handler))
+        .or(todo
+            .and(warp::put())
+            .and(warp::path::param())
+            .and(warp::body::json())
+            .and(with_db(db_pool.clone()))
+            .and_then(handler::update_todo_handler))
+        .or(todo
+            .and(warp::delete())
+            .and(warp::path::param())
+            .and(with_db(db_pool.clone()))
+            .and_then(handler::delete_todo_handler));
 
     // string all the routes together
     let routes = health_route
