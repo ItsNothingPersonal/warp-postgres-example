@@ -351,6 +351,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
+
+[[package]]
 name = "encoding_rs"
 version = "0.8.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -704,6 +710,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
  "cfg-if",
+]
+
+[[package]]
+name = "itconfig"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c0409a6ca1c517cc0395107e182666c4476daf98f6624cc52b99280e49d6120"
+dependencies = [
+ "itconfig-macro",
+]
+
+[[package]]
+name = "itconfig-macro"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d3575d4586d697df22eeebb8d663257ba5d20f1ed28207882ae43c71861714e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -1726,6 +1752,9 @@ dependencies = [
  "async-graphql-warp",
  "cargo-husky",
  "chrono",
+ "dotenv",
+ "itconfig",
+ "lazy_static",
  "log",
  "mobc",
  "mobc-postgres",
