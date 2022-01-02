@@ -1,7 +1,6 @@
-use std::convert::Infallible;
-
 use mobc_postgres::tokio_postgres;
 use serde::Serialize;
+use std::convert::Infallible;
 use thiserror::Error;
 use warp::{hyper::StatusCode, Rejection, Reply};
 

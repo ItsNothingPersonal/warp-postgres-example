@@ -1,9 +1,7 @@
 [package]
-name = "warp-graphql-tutorial"
+name = "warp-postgres-example"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 # logging
@@ -20,10 +18,6 @@ serde_derive = "1.0"
 
 # web
 warp = "0.3.2"
-
-# graphql
-async-graphql = "3.0.19"
-async-graphql-warp = "3.0.19"
 
 # database
 mobc-postgres = { version = "0.7.0", features = ["with-chrono-0_4"] }

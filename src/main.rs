@@ -1,8 +1,7 @@
-use std::convert::Infallible;
-
 use dotenv::dotenv;
 use mobc::{Connection, Pool};
 use mobc_postgres::{tokio_postgres, PgConnectionManager};
+use std::convert::Infallible;
 use tokio_postgres::NoTls;
 use warp::Filter;
 
@@ -13,7 +12,7 @@ mod handler;
 
 type DBCon = Connection<PgConnectionManager<NoTls>>;
 type DBPool = Pool<PgConnectionManager<NoTls>>;
-//type Result<T> = std::result::Result<T, warp::Rejection>;
+type Result<T> = std::result::Result<T, warp::Rejection>;
 
 itconfig::config! {
     PORT: u16 => 8000,
